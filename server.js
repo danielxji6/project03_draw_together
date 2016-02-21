@@ -58,14 +58,14 @@ app.get('/', function(req, res) {
   res.render('index');
 });
 
+app.get('/start', function(req, res) {
+  
+});
+
 app.get('/games', function(req, res) {
   res.render('game');
 });
 
-// listen on port 3000
-http.listen(3000, function() {
-  console.log('server started, port 3000');
-});
 
 /***
 API
@@ -87,4 +87,10 @@ io.on('connection', function(socket) {
     console.log('one user disconnected');
   });
 
+});
+
+
+// listen on port 3000
+http.listen(3000, function() {
+  console.log('server started, port 3000');
 });
