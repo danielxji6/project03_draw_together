@@ -1,7 +1,6 @@
-// game.js
-console.log('game.js load!');
-
-// setup socket
+/***
+SETUP
+***/
 socket = io.connect();
 
 // canvas setup
@@ -35,15 +34,15 @@ Play.prototype.draw = function(x, y, type) {
   }
 };
 
-// trigger init
 var Players =[];
-Players.push(new Play('aaa'));
-Players.push(new Play('bbb'));
-Players.push(new Play('ccc'));
+Players.push(new Play('guess_1'));
+Players.push(new Play('guess_1'));
+Players.push(new Play('guess_1'));
 
-// var c3 = new Play('c');
+/***
+EVENTS
+***/
 
-// draw event
 $('canvas').on('mousedown mousemove mouseup mouseout', function(event) {
   var type = event.handleObj.type;
   var x = event.offsetX;
@@ -56,16 +55,14 @@ $('canvas').on('mousedown mousemove mouseup mouseout', function(event) {
     type: type,
     user: user,
   };
-  // console.log(data);
   find_draw(data);
+  // send draw emit to server
   socket.emit('drawClick', data);
-
 });
 
-socket.on('draw', function(data) {
-  return find_draw(data);
-});
-
+/***
+FUNCTION
+***/
 function find_draw(data) {
   Players.forEach(function(ele) {
     if(ele.user === data.user) {
@@ -73,3 +70,15 @@ function find_draw(data) {
     }
   });
 }
+
+/***
+SOCKET
+***/
+
+socket.on('setUser', function(data) {
+  //TODO: set user if there's empty
+});
+
+socket.on('draw', function(data) {
+  find_draw(data);
+});
