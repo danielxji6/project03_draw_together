@@ -79,8 +79,12 @@ SOCKET.IO
 io.on('connection', function(socket) {
   console.log('one user in');
 
+  socket.on('drawClick', function(data) {
+    socket.broadcast.emit('draw', data);
+  });
+
   socket.on('disconnect', function() {
     console.log('one user disconnected');
   });
-  
+
 });
