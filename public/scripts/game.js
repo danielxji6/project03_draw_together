@@ -3,9 +3,6 @@ console.log('game.js load!');
 
 // setup socket
 socket = io.connect();
-socket.on('draw', function(data) {
-  return Play.draw(data.x, data.y, data.type);
-});
 
 // canvas setup
 function Play(user) {
@@ -13,7 +10,8 @@ function Play(user) {
   this.canvas = document.createElement('canvas');
   this.canvas.height = 200;
   this.canvas.width = 300;
-  this.canvas.id = 'c_' + this.user;
+  this.canvas.id = this.user;
+  // this.canvas.attr('data-user', this.user);
   $('#canvasDiv').append(this.canvas);
   this.ctx = this.canvas.getContext("2d");
   this.ctx.fillStyle = "solid";
@@ -27,7 +25,6 @@ Play.prototype.draw = function(x, y, type) {
   if (type === 'mousedown') {
     this.paint = true;
     this.ctx.moveTo(x, y);
-    console.log(this.ctx);
     this.ctx.beginPath();
   } else if (type === 'mousemove' && this.paint) {
     this.ctx.lineTo(x, y);
@@ -39,8 +36,11 @@ Play.prototype.draw = function(x, y, type) {
 };
 
 // trigger init
-var c1 = new Play('aaa');
-var c2 = new Play('bbb');
+var Players =[];
+Players.push(new Play('aaa'));
+Players.push(new Play('bbb'));
+Players.push(new Play('ccc'));
+
 // var c3 = new Play('c');
 
 // draw event
@@ -48,13 +48,28 @@ $('canvas').on('mousedown mousemove mouseup mouseout', function(event) {
   var type = event.handleObj.type;
   var x = event.offsetX;
   var y = event.offsetY;
-  // console.log(x, y, type);
+  var user = this.id;
 
-  // draw by user or socket
-  c1.draw(x, y, type);
-  // Play.socket.emit('drawClick', {
-  //   x: x,
-  //   y: y,
-  //   type: type,
-  // });
+  var data = {
+    x: x,
+    y: y,
+    type: type,
+    user: user,
+  };
+  // console.log(data);
+  find_draw(data);
+  socket.emit('drawClick', data);
+
 });
+
+socket.on('draw', function(data) {
+  return find_draw(data);
+});
+
+function find_draw(data) {
+  Players.forEach(function(ele) {
+    if(ele.user === data.user) {
+      ele.draw(data.x, data.y, data.type);
+    }
+  });
+}
