@@ -1,6 +1,11 @@
-// require express and other modules
+/***
+SERVER
+***/
+
 var express = require('express'),
     app = express(),
+    http = require('http').Server(app),
+    io = require('socket.io')(http),
     bodyParser = require('body-parser'),
     hbs = require('hbs'),
     mongoose = require('mongoose'),
@@ -23,10 +28,10 @@ hbs.registerPartials(__dirname + '/views/partials');
 // connect to mongodb
 mongoose.connect('mongodb://localhost/draw_together');
 
-// require Post and User models
+// require models
 var User = require('./models/user');
-var Game = require('./models/game');
-var Draw = require('./models/draw');
+// var Game = require('./models/game');
+// var Draw = require('./models/draw');
 
 // middleware for auth
 app.use(cookieParser());
@@ -44,15 +49,38 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 
-// HOMEPAGE ROUTE
+/***
+ROUTES
+***/
 
-app.get('/', function (req, res) {
+app.get('/', function(req, res) {
   // console.log(req.user);
-  res.render('index', { user: req.user });
+  res.render('index');
 });
 
+app.get('/games', function(req, res) {
+  res.render('game');
+});
 
 // listen on port 3000
-app.listen(3000, function() {
+http.listen(3000, function() {
   console.log('server started, port 3000');
+});
+
+/***
+API
+***/
+
+
+/***
+SOCKET.IO
+***/
+
+io.on('connection', function(socket) {
+  console.log('one user in');
+
+  socket.on('disconnect', function() {
+    console.log('one user disconnected');
+  });
+  
 });
