@@ -5,16 +5,15 @@ var mongoose = require('mongoose'),
 var UserSchema = new Schema({
   username: String,
   password: String,
-  // games: [{
-  //   type: Schema.Types.ObjectId,
-  //   ref: 'Post'
-  // }]
+  games: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Game'
+  }]
 });
 
 UserSchema.plugin(passportLocalMongoose, {
-  // populateFields: 'posts'
+  populateFields: 'games'
 });
 
 var User = mongoose.model('User', UserSchema);
-
 module.exports = User;
