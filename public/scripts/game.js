@@ -35,9 +35,9 @@ Play.prototype.draw = function(x, y, type) {
 };
 
 var Players =[];
-Players.push(new Play('guess_1'));
-Players.push(new Play('guess_1'));
-Players.push(new Play('guess_1'));
+Players.push(new Play('guest_1'));
+Players.push(new Play('guest_2'));
+Players.push(new Play('guest_3'));
 
 /***
 EVENTS

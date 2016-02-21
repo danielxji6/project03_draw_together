@@ -29,7 +29,7 @@ hbs.registerPartials(__dirname + '/views/partials');
 mongoose.connect('mongodb://localhost/draw_together');
 
 // require models
-var User = require('./models/user');
+var db = require('./models');
 // var Game = require('./models/game');
 // var Draw = require('./models/draw');
 
@@ -44,9 +44,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // passport config
-passport.use(new LocalStrategy(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+passport.use(new LocalStrategy(db.User.authenticate()));
+passport.serializeUser(db.User.serializeUser());
+passport.deserializeUser(db.User.deserializeUser());
 
 
 /***
@@ -59,12 +59,40 @@ app.get('/', function(req, res) {
 });
 
 app.get('/start', function(req, res) {
-  
+  db.Game.findOne({open: true}, function(err, game) {
+    if(err) { return console.log('ERROR:', err);}
+    if(!game) {
+      console.log('in create game');
+      db.Game.create({}, function(err, newGame) {
+        if(err) { return console.log('ERROR:', err);}
+        // go to the new create game play
+        res.redirect('/games/' + newGame._id);
+      });
+      return console.log('new game on');
+    } else {
+      res.redirect('/games/' + game._id);
+      return console.log('join old game');
+    }
+  });
 });
 
-app.get('/games', function(req, res) {
+app.get('/games/:id', function(req, res) {
+  var id = req.params.id;
+  var room;
+  rooms.forEach(function(ele, index) {
+    if(ele.name === id) room = ele;
+  });
+  if(!room) {
+    room = new Room(id);
+    rooms.push(room);
+  }
+  console.log(rooms);
   res.render('game');
 });
+
+// app.get('/games', function(req, res) {
+//   res.render('game');
+// });
 
 
 /***
@@ -76,8 +104,32 @@ API
 SOCKET.IO
 ***/
 
+var rooms = [];
+
+// Create a new room
+function Room(name) {
+  this.name = name;
+}
+
+Room.prototype.init = function() {
+  this.nsp = io.of('/' + this.name);
+  this.nsp.on('connection', function(socket) {
+    console.log('one in the room', this.name);
+  });
+};
+
 io.on('connection', function(socket) {
   console.log('one user in');
+
+  //TODO: emit to other player
+
+  socket.on('setUser', function(data) {
+
+  });
+
+  socket.on('gameFlow', function(data) {
+
+  });
 
   socket.on('drawClick', function(data) {
     socket.broadcast.emit('draw', data);
