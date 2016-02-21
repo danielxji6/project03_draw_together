@@ -1,59 +1,60 @@
-$(function() {
+// game.js
+console.log('game.js load!');
 
-  var App = {};
+// setup socket
+socket = io.connect();
+socket.on('draw', function(data) {
+  return Play.draw(data.x, data.y, data.type);
+});
 
-  // canvas setup
-  App.init = function() {
-    App.canvas = document.createElement('canvas');
-    App.canvas.height = 700;
-    App.canvas.width = 300;
-    App.canvas.id = 'canvas';
-    $('#canvasDiv').append(App.canvas);
-    App.ctx = App.canvas.getContext("2d");
-    App.ctx.fillStyle = "solid";
-    App.ctx.strokeStyle = "bule";
-    App.ctx.lineWidth = 2;
-    App.ctx.lineCap = "round";
-    App.paint = false;
-    App.socket = io.connect();
-    App.socket.on('draw', function(data) {
-      return App.draw(data.x, data.y, data.type);
-    });
-    // draw on canvas
-    App.draw = function(x, y, type) {
-      if (type === 'mousedown') {
-        App.paint = true;
-        App.ctx.moveTo(x, y);
-        App.ctx.beginPath();
-      } else if (type === 'mousemove' && App.paint) {
-        App.ctx.lineTo(x, y);
-        App.ctx.stroke();
-      } else {
-        App.paint = false;
-        App.ctx.closePath();
-      }
-    };
-  };
-  // trigger init
-  App.init();
+// canvas setup
+function Play(user) {
+  this.user = user;
+  this.canvas = document.createElement('canvas');
+  this.canvas.height = 200;
+  this.canvas.width = 300;
+  this.canvas.id = 'c_' + this.user;
+  $('#canvasDiv').append(this.canvas);
+  this.ctx = this.canvas.getContext("2d");
+  this.ctx.fillStyle = "solid";
+  this.ctx.strokeStyle = "bule";
+  this.ctx.lineWidth = 2;
+  this.ctx.lineCap = "round";
+  this.paint = false;
+}
+// draw on canvas
+Play.prototype.draw = function(x, y, type) {
+  if (type === 'mousedown') {
+    this.paint = true;
+    this.ctx.moveTo(x, y);
+    console.log(this.ctx);
+    this.ctx.beginPath();
+  } else if (type === 'mousemove' && this.paint) {
+    this.ctx.lineTo(x, y);
+    this.ctx.stroke();
+  } else {
+    this.paint = false;
+    this.ctx.closePath();
+  }
+};
 
-  // draw event
-  $('#canvas').on('mousedown mousemove mouseup mouseout', function(event) {
-    var type = event.handleObj.type;
-    // console.log(type);
-    var x = event.offsetX;
-    var y = event.offsetY;
-    // console.log(x, y, type);
-    // console.log(event);
+// trigger init
+var c1 = new Play('aaa');
+var c2 = new Play('bbb');
+// var c3 = new Play('c');
 
-    // draw by user or socket
-    App.draw(x, y, type);
-    App.socket.emit('drawClick', {
-      x: x,
-      y: y,
-      type: type,
-    });
-  });
+// draw event
+$('canvas').on('mousedown mousemove mouseup mouseout', function(event) {
+  var type = event.handleObj.type;
+  var x = event.offsetX;
+  var y = event.offsetY;
+  // console.log(x, y, type);
 
-
+  // draw by user or socket
+  c1.draw(x, y, type);
+  // Play.socket.emit('drawClick', {
+  //   x: x,
+  //   y: y,
+  //   type: type,
+  // });
 });
