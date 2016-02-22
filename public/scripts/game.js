@@ -1,7 +1,11 @@
 /***
 SETUP
 ***/
-socket = io.connect();
+
+var id = $('#canvasDiv').data('socket-id');
+var spot = $('#canvasDiv').data('spot');
+var socket = io();
+
 
 // canvas setup
 function Play(user) {
@@ -75,8 +79,11 @@ function find_draw(data) {
 SOCKET
 ***/
 
+socket.emit('newUser', {id: id});
+// socket.emit('setUser', {id: id});
+
 socket.on('setUser', function(data) {
-  //TODO: set user if there's empty
+  
 });
 
 socket.on('draw', function(data) {
