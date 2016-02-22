@@ -5,6 +5,7 @@ SETUP
 var id = $('#canvasDiv').data('socket-id');
 var spot = $('#canvasDiv').data('spot');
 var socket = io();
+var state = '';
 
 
 // canvas setup
@@ -48,25 +49,30 @@ EVENTS
 ***/
 
 $('canvas').on('mousedown mousemove mouseup mouseout', function(event) {
-  var type = event.handleObj.type;
-  var x = event.offsetX;
-  var y = event.offsetY;
-  var user = this.id;
+  if(state == 'start') {
+    if(this.id == ('guest_'+ spot)) {
+      var type = event.handleObj.type;
+      var x = event.offsetX;
+      var y = event.offsetY;
+      var user = this.id;
 
-  var data = {
-    x: x,
-    y: y,
-    type: type,
-    user: user,
-  };
-  find_draw(data);
-  // send draw emit to server
-  socket.emit('drawClick', data);
+      var data = {
+        x: x,
+        y: y,
+        type: type,
+        user: user,
+      };
+      find_draw(data);
+      // send draw emit to server
+      socket.emit('drawClick', data);
+    }
+  }
 });
 
 /***
 FUNCTION
 ***/
+
 function find_draw(data) {
   Players.forEach(function(ele) {
     if(ele.user === data.user) {
@@ -75,15 +81,27 @@ function find_draw(data) {
   });
 }
 
+// Countdown
+function shoot(callback) {
+  console.log("ha");
+  callback();
+}
+
+function wait10sec(){
+    setTimeout(function(){
+        shoot(wait10sec);
+    }, 1000);
+}
+// shoot(wait10sec);
+
 /***
 SOCKET
 ***/
 
 socket.emit('newUser', {id: id});
-// socket.emit('setUser', {id: id});
 
-socket.on('setUser', function(data) {
-  
+socket.on('gameFlow', function(data) {
+  state = data.state;
 });
 
 socket.on('draw', function(data) {

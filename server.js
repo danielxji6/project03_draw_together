@@ -81,6 +81,7 @@ app.get('/games/:id', function(req, res) {
   var spot;
   db.Game.findOne({_id: id}, function(err, game) {
     if(err) { return console.log('ERROR:', err);}
+    if(!game.open) { res.redirect('/start'); }
     if(!game.player1) {
       spot = 1;
       game.player1 = username || 'guest_1';
@@ -107,18 +108,13 @@ app.get('/games/:id', function(req, res) {
   });
 });
 
-// app.get('/games', function(req, res) {
-//   res.render('game');
-// });
-
-
 /***
 API
 ***/
 
 
 /***
-SOCKET.IO
+ROOMS
 ***/
 
 var rooms = [];
@@ -127,17 +123,28 @@ var rooms = [];
 function Room(name) {
   this.name = name;
   this.time = Date.now();
+  this.state = 'wait';
+  // this.wait();
 }
+
+// Room.prototype.wait = function() {
+//   var rm = this;
+//   setTimeout(function(){
+//     rm.state = 'start';
+//   }, 50000);
+// };
+
+/***
+SOCKET.IO
+***/
 
 io.on('connection', function(socket) {
   console.log('one user in');
 
   socket.on('newUser', function(data) {
-    var room;
-    rooms.forEach(function(ele) { if(ele.name == data.id) room = ele.name; });
-    socket.room = room;
-    socket.join(room);
-    console.log('in the room');
+    rooms.forEach(function(ele) { if(ele.name == data.id) socket.room = ele; });
+    console.log(socket.room);
+    socket.join(socket.room.name);
     socket.emit('setUser', {user: "", spot: data.num});
   });
 
@@ -145,9 +152,12 @@ io.on('connection', function(socket) {
   //   console.log('setuser');
   // });
 
-  socket.on('gameFlow', function(data) {
+  setTimeout(function(){
+    socket.room['state'] = 'start';
+    socket.emit('gameFlow', {state: socket.room.state});
+    console.log('Game start in room', socket.room.name);
+  }, 10000);
 
-  });
 
   socket.on('drawClick', function(data) {
     socket.broadcast.to(socket.room).emit('draw', data);
