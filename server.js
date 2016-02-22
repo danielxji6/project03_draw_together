@@ -161,6 +161,10 @@ io.on('connection', function(socket) {
     console.log('Game start in room', socket.room.name);
   }, 8000);
 
+  socket.on('gameFlow', function(data) {
+    socket.room.state = data.state;
+    socket.emit('gameFlow', {state: socket.room.state});
+  });
 
   socket.on('drawClick', function(data) {
     socket.broadcast.to(socket.room.name).emit('draw', data);

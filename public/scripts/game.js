@@ -6,6 +6,7 @@ var id = $('#canvasDiv').data('socket-id');
 var spot = $('#canvasDiv').data('spot');
 var socket = io();
 var state = '';
+var count = 60;
 
 
 // canvas setup
@@ -81,16 +82,29 @@ function find_draw(data) {
   });
 }
 
-// Countdown
-function shoot(callback) {
-  console.log("ha");
-  callback();
+// change title to match game flow
+function changeTitle(state) {
+  if(state === 'start') {
+    $('#gameTitle').text('Start to draw!');
+    countdown();
+  }
 }
 
-function wait10sec(){
+// Countdown
+function countdown(){
     setTimeout(function(){
-        shoot(wait10sec);
+        shoot(countdown);
     }, 1000);
+}
+function shoot(callback) {
+  var time = '00:' + (count < 10 ? '0'+count : count);
+  $('#countdown').text(time);
+  if(count) {
+    callback();
+    count--;
+  } else {
+    socket.emit('gameFlow', {state: 'finish'});
+  }
 }
 // shoot(wait10sec);
 
@@ -102,6 +116,7 @@ socket.emit('newUser', {id: id});
 
 socket.on('gameFlow', function(data) {
   state = data.state;
+  changeTitle(state);
 });
 
 socket.on('draw', function(data) {

@@ -1,18 +1,23 @@
 {{> header}}
 
-  <!-- page content -->
-  <div class="container">
-    <div class="row">
-      <div class="col-md-12">
-        <div id ="canvasDiv" class="col-md-6 col-md-3" data-socket-id="{{socket_id}}" data-spot="{{spot}}">
-          <!-- canvas -->
-        </div>
+<!-- page content -->
+<div class="container">
+  <div class="row col-md-2">
+    <h1 id="gameTitle">Waiting...</h1>
+    <h3 id="countdown"></h3>
+  </div>
+  <div class="row col-md-3">
+    <div class="">
+      <div id="canvasDiv" class="col-md-6 col-md-3" data-socket-id="{{socket_id}}" data-spot="{{spot}}">
+        <!-- canvas -->
       </div>
     </div>
   </div>
+</div>
 
-  <!-- custom script -->
-  <script type="text/javascript" src="../socket.io/socket.io.js"></script>
-  <script type="text/javascript" src="../scripts/game.js"></script>
+<!-- custom script -->
+<script type="text/javascript" src="../socket.io/socket.io.js"></script>
+<script type="text/javascript" src="../scripts/game.js"></script>
 </body>
+
 </html>
