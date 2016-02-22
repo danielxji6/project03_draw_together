@@ -81,7 +81,11 @@ app.get('/games/:id', function(req, res) {
   var spot;
   db.Game.findOne({_id: id}, function(err, game) {
     if(err) { return console.log('ERROR:', err);}
-    if(!game.open) { res.redirect('/start'); }
+
+    // redirect player to a new game if the game is full
+    if(!game.open) res.redirect('/start');
+
+    // assign player to empty spot
     if(!game.player1) {
       spot = 1;
       game.player1 = username || 'guest_1';
@@ -96,13 +100,23 @@ app.get('/games/:id', function(req, res) {
       game.open = false;
       game.save();
     }
+
+    // find the room and in the rooms list and check if it's still waiting
     rooms.forEach(function(ele, index) {
-      if(ele.name === id) room = ele;
+      if(ele.name === id) {
+        room = ele;
+        // redirect player if the game is already start
+        if(room.state !== 'wait') res.redirect('/start');
+      }
     });
+
+    // create a new room if it's a new game
     if(!room) {
       room = new Room(id);
       rooms.push(room);
     }
+
+    // send the room id (or socket id) and spot to user
     console.log("receive", spot);
     res.render('game', {socket_id: id, spot: spot});
   });
@@ -117,6 +131,7 @@ API
 ROOMS
 ***/
 
+// rooms list that contain games for gameflow and socket.io
 var rooms = [];
 
 // Create a new room
@@ -124,15 +139,8 @@ function Room(name) {
   this.name = name;
   this.time = Date.now();
   this.state = 'wait';
-  // this.wait();
 }
 
-// Room.prototype.wait = function() {
-//   var rm = this;
-//   setTimeout(function(){
-//     rm.state = 'start';
-//   }, 50000);
-// };
 
 /***
 SOCKET.IO
@@ -145,26 +153,21 @@ io.on('connection', function(socket) {
     rooms.forEach(function(ele) { if(ele.name == data.id) socket.room = ele; });
     console.log(socket.room);
     socket.join(socket.room.name);
-    socket.emit('setUser', {user: "", spot: data.num});
   });
 
-  // socket.on('setUser', function(data) {
-  //   console.log('setuser');
-  // });
-
   setTimeout(function(){
-    socket.room['state'] = 'start';
+    socket.room.state = 'start';
     socket.emit('gameFlow', {state: socket.room.state});
     console.log('Game start in room', socket.room.name);
-  }, 10000);
+  }, 8000);
 
 
   socket.on('drawClick', function(data) {
-    socket.broadcast.to(socket.room).emit('draw', data);
+    socket.broadcast.to(socket.room.name).emit('draw', data);
   });
 
   socket.on('disconnect', function() {
-    console.log('one user disconnected');
+    console.log('one user out');
   });
 
 });
