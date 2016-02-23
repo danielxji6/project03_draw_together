@@ -163,7 +163,7 @@ Room.prototype.wait = function() {
       // start the game and start countdown
       rm.count();
       // set false to game data
-      db.Game.findOne({id: rm.id}, function(err, game) {
+      db.Game.findOne({_id: rm.id}, function(err, game) {
         game.open = false;
         game.save();
       });
@@ -178,7 +178,7 @@ Room.prototype.count = function() {
     if(rm.countTime) {
       io.sockets.to(rm.id).emit('gameFlow', {state: 'start', time: rm.countTime});
       rm.countTime--;
-      rm.wait();
+      rm.count();
     } else {
       io.sockets.to(rm.id).emit('gameFlow', {state: 'finish', time: 0});
     }

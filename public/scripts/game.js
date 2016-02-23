@@ -83,21 +83,23 @@ function find_draw(data) {
 }
 
 // change title to match game flow
-function changeTitle(state) {
-  if (state === 'start') {
-    $('#gameTitle').text('Start to draw!');
+function changeTitle(state, count) {
+  var text;
+  var time = '';
+  if (state === 'wait') {
+    text = 'Waiting... ';
+  } else if (state === 'start') {
+    text = 'Start to draw! ';
+  } else if (state === 'finish') {
+    text = 'Finish! Good job!';
   }
-}
-
-function changeTimer(count) {
   if(count) {
     count--;
-    var time = '00:' + (count < 10 ? '0' + count : count);
-    $('#countdown').text(time);
-  } else {
-    $('#countdown').text('');
+    time = '00:' + (count < 10 ? '0' + count : count);
   }
+  $('#gameTitle').text(text).append('<small>'+ time +'</small>');
 }
+
 
 /***
 SOCKET
@@ -109,8 +111,7 @@ socket.emit('newUser', {
 
 socket.on('gameFlow', function(data) {
   state = data.state;
-  changeTitle(state);
-  changeTimer(data.time);
+  changeTitle(state, data.time);
 });
 
 socket.on('draw', function(data) {
