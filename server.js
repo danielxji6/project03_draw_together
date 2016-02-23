@@ -155,7 +155,7 @@ Room.prototype.wait = function() {
   var rm = this;
   // set every second
   setTimeout(function(){
-    if(rm.waitTime) {
+    if(rm.waitTime && rm.state === 'wait') {
       io.sockets.to(rm.id).emit('gameFlow', {state: 'wait', time: rm.waitTime});
       rm.waitTime--;
       rm.wait();
@@ -181,6 +181,7 @@ Room.prototype.count = function() {
       rm.count();
     } else {
       io.sockets.to(rm.id).emit('gameFlow', {state: 'finish', time: 0});
+      rooms.splice(rooms.indexOf(rm), 1);
     }
   }, 1000);
 };
