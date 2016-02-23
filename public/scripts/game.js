@@ -103,9 +103,9 @@ function changeTitle(state, count) {
 
 function finish_render() {
   // save png data
-  var pndD_1 = players[0].canvas.toDataURL();
-  var pndD_2 = players[1].canvas.toDataURL();
-  var pndD_3 = players[2].canvas.toDataURL();
+  var pndD_1 = Players[0].canvas.toDataURL();
+  var pndD_2 = Players[1].canvas.toDataURL();
+  var pndD_3 = Players[2].canvas.toDataURL();
 
   var data = {
     game_id: id,

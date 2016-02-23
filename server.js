@@ -162,13 +162,13 @@ app.post('/signup', function(req, res) {
   if (req.user) {
     res.redirect('/profile');
   } else {
-    // Check if the username or number has used before
-    db.User.findOne({phoneNum: req.body.phoneNum}, function(err, user) {
+    // Check if the username has used before
+    db.User.findOne({username: req.body.username}, function(err, user) {
       if(user) {
         res.send("duplicate");
       } else {
         // Create user
-        db.User.register(new db.User({ username: req.body.username, phoneNum: req.body.phoneNum, remindText: true }), req.body.password,
+        db.User.register(new db.User({ username: req.body.username}), req.body.password,
           function (err, newUser) {
             passport.authenticate('local')(req, res, function () {
               res.send("User created");
