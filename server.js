@@ -134,6 +134,35 @@ app.get('/games/:id', function(req, res) {
 API
 ***/
 
+app.get('/api/user/draws/save/:id', function api_save_user_draw(req, res) {
+  if(req.user) {
+    db.User.findOne({_id: req.user._id}, function(err, user) {
+      db.Game.findOne({_id: req.params.id}, function(err, game) {
+        user.games.push(game);
+        user.save(function(err, user) {
+          res.send("save draw to user");
+        });
+      });
+    });
+  } else {
+    res.redirect('/signup');
+  }
+});
+
+app.post('/api/draws/save', function api_save_draw(req, res) {
+  var pngData = req.body.pngData;
+  var gameID = req.body.game_id;
+  db.Game.findOne({_id: gameID}, function(err, game) {
+    if(!game._draw) {
+      db.Draw.create(pngData, function(err, draw) {
+        game._draw = draw._id;
+        game.save(function(err, game) {
+          res.send("save draw");
+        });
+      });
+    }
+  });
+});
 
 /***
 ROOMS
