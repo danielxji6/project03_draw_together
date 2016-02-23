@@ -193,13 +193,14 @@ SOCKET.IO
 io.on('connection', function(socket) {
   console.log('one user in');
 
+  // set new player to the room base on id
   socket.on('newUser', function(data) {
     rooms.forEach(function(ele) { if(ele.id == data.id) socket.room = ele; });
     // console.log(socket.room);
     socket.join(socket.room.id);
   });
 
-
+  // broadcast every movements to other player
   socket.on('drawClick', function(data) {
     socket.broadcast.to(socket.room.id).emit('draw', data);
   });
