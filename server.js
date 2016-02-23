@@ -53,26 +53,26 @@ passport.deserializeUser(db.User.deserializeUser());
 ROUTES
 ***/
 
-app.get('/', function(req, res) {
+app.get('/', function home_page(req, res) {
   // console.log(req.user);
   res.render('index');
 });
 
-app.get('/signup', function(req, res) {
+app.get('/signup', function signup_page(req, res) {
   if(req.user) {
     res.redirect('/profile');
   }
   res.render('signup');
 });
 
-app.get('/login', function(req, res) {
+app.get('/login', function login_page(req, res) {
   if(req.user) {
     res.redirect('/profile');
   }
   res.render('login');
 });
 
-app.get('/start', function(req, res) {
+app.get('/start', function start_a_game(req, res) {
   var id;
   db.Game.findOne({open: true}, function(err, game) {
     if(err) { return console.log('ERROR:', err);}
@@ -93,7 +93,7 @@ app.get('/start', function(req, res) {
   });
 });
 
-app.get('/games/:id', function(req, res) {
+app.get('/games/:id', function game_page(req, res) {
   var id = req.params.id;
   var userID = req.user || 'guest'; //TODO: find username req.user.id
   var room;
@@ -143,6 +143,79 @@ app.get('/games/:id', function(req, res) {
     res.render('game', {socket_id: id, spot: spot});
   });
 });
+
+app.get('/profile', function profile_page(req, res) {
+  if (req.user) {
+    res.render('profile', req.user);
+  } else {
+    res.redirect('/');
+  }
+});
+
+/***
+AUTH
+***/
+
+// Sign up new user, then log them in
+app.post('/signup', function(req, res) {
+  // if user is logged in, don't let them sign up again
+  if (req.user) {
+    res.redirect('/profile');
+  } else {
+    // Check if the username or number has used before
+    db.User.findOne({phoneNum: req.body.phoneNum}, function(err, user) {
+      if(user) {
+        res.send("duplicate");
+      } else {
+        // Create user
+        db.User.register(new db.User({ username: req.body.username, phoneNum: req.body.phoneNum, remindText: true }), req.body.password,
+          function (err, newUser) {
+            passport.authenticate('local')(req, res, function () {
+              res.send("User created");
+            });
+          }
+        );
+      }
+    });
+  }
+});
+
+// log in user
+app.post('/login', passport.authenticate('local'), function (req, res) {
+  res.send('Logged in');
+});
+
+// log out user
+app.get('/logout', function (req, res) {
+  req.logout();
+  res.redirect('/');
+});
+
+// // Update user profile
+// app.put('/api/user', function api_delete_user (req, res) {
+//   var userId = req.user._id;
+//   var data = req.body;
+//   console.log(req.user);
+//   console.log(data);
+//   db.User.findOne({_id: userId}, function (err, user) {
+//     if(err) { return console.log("ERROR: ", err);}
+//     user.phoneNum = data.phoneNum;
+//     user.location = data.location;
+//     user.remindText = (data.remindText === 'on' ? true : false);
+//     user.save(function (err, savedUser) {
+//       res.send('User saved!');
+//     });
+//   });
+// });
+//
+// // Delete user
+// app.delete('/api/user', function api_delete_user (req, res) {
+//   var userId = req.user._id;
+//   db.User.remove({_id: userId}, function (err, user) {
+//     if(err) { return console.log("ERROR: ", err);}
+//     res.json(user);
+//   });
+// });
 
 /***
 API
