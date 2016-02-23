@@ -58,6 +58,20 @@ app.get('/', function(req, res) {
   res.render('index');
 });
 
+app.get('/signup', function(req, res) {
+  if(req.user) {
+    res.redirect('/profile');
+  }
+  res.render('signup');
+});
+
+app.get('/login', function(req, res) {
+  if(req.user) {
+    res.redirect('/profile');
+  }
+  res.render('login');
+});
+
 app.get('/start', function(req, res) {
   var id;
   db.Game.findOne({open: true}, function(err, game) {
