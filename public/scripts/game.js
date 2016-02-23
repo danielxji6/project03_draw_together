@@ -63,6 +63,7 @@ $('canvas').on('mousedown mousemove mouseup mouseout', function(event) {
         type: type,
         user: user,
       };
+
       find_draw(data);
       // send draw emit to server
       socket.emit('drawClick', data);
@@ -100,6 +101,28 @@ function changeTitle(state, count) {
   $('#gameTitle').text(text).append('<small>'+ time +'</small>');
 }
 
+function finish_render() {
+  // save png data
+  var pndD_1 = players[0].canvas.toDataURL();
+  var pndD_2 = players[1].canvas.toDataURL();
+  var pndD_3 = players[2].canvas.toDataURL();
+
+  var data = {
+    game_id: id,
+    pngData: {
+      pndD_1: pndD_1,
+      pndD_2: pndD_2,
+      pndD_3: pndD_3,
+    },
+  };
+
+  $.post('/api/draws/save', data);
+
+  // render buttons
+  $('#finish-list').append('<a class="btn btn-default" href="/api/user/draws/save/'+ id +'">Save to profile</a>');
+  $('#finish-list').append('<a class="btn btn-default" href="/start">Play again!</a>');
+
+}
 
 /***
 SOCKET
@@ -112,6 +135,9 @@ socket.emit('newUser', {
 socket.on('gameFlow', function(data) {
   state = data.state;
   changeTitle(state, data.time);
+  if(state === 'finish') {
+    finish_render();
+  }
 });
 
 socket.on('draw', function(data) {
