@@ -59,54 +59,43 @@ app.get('/', function(req, res) {
 });
 
 app.get('/start', function(req, res) {
+  var id;
   db.Game.findOne({open: true}, function(err, game) {
     if(err) { return console.log('ERROR:', err);}
+
+    // if there's no open game then create one
     if(!game) {
       db.Game.create({}, function(err, newGame) {
         if(err) { return console.log('ERROR:', err);}
-        // go to the new create game play
-        res.redirect('/games/' + newGame._id);
+        id = newGame.id;
       });
       return console.log('new game on');
     } else {
-      res.redirect('/games/' + game._id);
+      id = game.id;
     }
+
+    // go to the game play by id
+    res.redirect('/games/' + id);
   });
 });
 
 app.get('/games/:id', function(req, res) {
   var id = req.params.id;
-  var username = req.user || 'guest'; //TODO: find username req.user.username
+  var userID = req.user || 'guest'; //TODO: find username req.user.id
   var room;
   var spot;
   db.Game.findOne({_id: id}, function(err, game) {
     if(err) { return console.log('ERROR:', err);}
 
-    // redirect player to a new game if the game is full
+    // if the game is not open, redirect player to a new game
     if(!game.open) res.redirect('/start');
-
-    // assign player to empty spot
-    if(!game.player1) {
-      spot = 1;
-      game.player1 = username || 'guest_1';
-      game.save();
-    } else if(!game.player2) {
-      spot = 2;
-      game.player2 = username || 'guest_2';
-      game.save();
-    } else {
-      spot = 3;
-      game.player3 = username || 'guest_3';
-      game.open = false;
-      game.save();
-    }
 
     // find the room and in the rooms list and check if it's still waiting
     rooms.forEach(function(ele, index) {
-      if(ele.name === id) {
-        room = ele;
+      if(ele.id === id) {
         // redirect player if the game is already start
-        if(room.state !== 'wait') res.redirect('/start');
+        if(ele.state !== 'wait') res.redirect('/start');
+        room = ele;
       }
     });
 
@@ -116,7 +105,26 @@ app.get('/games/:id', function(req, res) {
       rooms.push(room);
     }
 
-    // send the room id (or socket id) and spot to user
+    // assign player to empty spot
+    if(!game.player1) {
+      spot = 1;
+      game.player1 = userID || 'guest_1';
+      room.wait();
+    } else if(!game.player2) {
+      spot = 2;
+      game.player2 = userID || 'guest_2';
+    } else {
+      spot = 3;
+      game.player3 = userID || 'guest_3';
+      game.open = false;
+      room.state = 'start';
+      room.count();
+    }
+
+    // save the player id and condition
+    game.save();
+
+    // send the room id (aka socket id) and which spot to user
     console.log("receive", spot);
     res.render('game', {socket_id: id, spot: spot});
   });
@@ -135,12 +143,47 @@ ROOMS
 var rooms = [];
 
 // Create a new room
-function Room(name) {
-  this.name = name;
-  this.time = Date.now();
+function Room(id) {
+  this.id = id;
+  this.startTime = Date.now();
+  this.countTime = 60;
+  this.waitTime = 11;
   this.state = 'wait';
 }
 
+Room.prototype.wait = function() {
+  var rm = this;
+  // set every second
+  setTimeout(function(){
+    if(rm.waitTime) {
+      io.sockets.to(rm.id).emit('gameFlow', {state: 'wait', time: rm.waitTime});
+      rm.waitTime--;
+      rm.wait();
+    } else if(rm.state == 'wait') { // start the game but prevent double start
+      // start the game and start countdown
+      rm.count();
+      // set false to game data
+      db.Game.findOne({id: rm.id}, function(err, game) {
+        game.open = false;
+        game.save();
+      });
+    }
+  }, 1000);
+};
+
+Room.prototype.count = function() {
+  var rm = this;
+  // set every second
+  setTimeout(function(){
+    if(rm.countTime) {
+      io.sockets.to(rm.id).emit('gameFlow', {state: 'start', time: rm.countTime});
+      rm.countTime--;
+      rm.wait();
+    } else {
+      io.sockets.to(rm.id).emit('gameFlow', {state: 'finish', time: 0});
+    }
+  }, 1000);
+};
 
 /***
 SOCKET.IO
@@ -150,24 +193,14 @@ io.on('connection', function(socket) {
   console.log('one user in');
 
   socket.on('newUser', function(data) {
-    rooms.forEach(function(ele) { if(ele.name == data.id) socket.room = ele; });
-    console.log(socket.room);
-    socket.join(socket.room.name);
+    rooms.forEach(function(ele) { if(ele.id == data.id) socket.room = ele; });
+    // console.log(socket.room);
+    socket.join(socket.room.id);
   });
 
-  setTimeout(function(){
-    socket.room.state = 'start';
-    socket.emit('gameFlow', {state: socket.room.state});
-    console.log('Game start in room', socket.room.name);
-  }, 8000);
-
-  socket.on('gameFlow', function(data) {
-    socket.room.state = data.state;
-    socket.emit('gameFlow', {state: socket.room.state});
-  });
 
   socket.on('drawClick', function(data) {
-    socket.broadcast.to(socket.room.name).emit('draw', data);
+    socket.broadcast.to(socket.room.id).emit('draw', data);
   });
 
   socket.on('disconnect', function() {

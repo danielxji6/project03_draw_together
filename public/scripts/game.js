@@ -40,7 +40,7 @@ Play.prototype.draw = function(x, y, type) {
   }
 };
 
-var Players =[];
+var Players = [];
 Players.push(new Play('guest_1'));
 Players.push(new Play('guest_2'));
 Players.push(new Play('guest_3'));
@@ -50,8 +50,8 @@ EVENTS
 ***/
 
 $('canvas').on('mousedown mousemove mouseup mouseout', function(event) {
-  if(state == 'start') {
-    if(this.id == ('guest_'+ spot)) {
+  if (state == 'start') {
+    if (this.id == ('guest_' + spot)) {
       var type = event.handleObj.type;
       var x = event.offsetX;
       var y = event.offsetY;
@@ -76,7 +76,7 @@ FUNCTION
 
 function find_draw(data) {
   Players.forEach(function(ele) {
-    if(ele.user === data.user) {
+    if (ele.user === data.user) {
       ele.draw(data.x, data.y, data.type);
     }
   });
@@ -84,39 +84,33 @@ function find_draw(data) {
 
 // change title to match game flow
 function changeTitle(state) {
-  if(state === 'start') {
+  if (state === 'start') {
     $('#gameTitle').text('Start to draw!');
-    countdown();
   }
 }
 
-// Countdown
-function countdown(){
-    setTimeout(function(){
-        shoot(countdown);
-    }, 1000);
-}
-function shoot(callback) {
-  var time = '00:' + (count < 10 ? '0'+count : count);
-  $('#countdown').text(time);
+function changeTimer(count) {
   if(count) {
-    callback();
     count--;
+    var time = '00:' + (count < 10 ? '0' + count : count);
+    $('#countdown').text(time);
   } else {
-    socket.emit('gameFlow', {state: 'finish'});
+    $('#countdown').text('');
   }
 }
-// shoot(wait10sec);
 
 /***
 SOCKET
 ***/
 
-socket.emit('newUser', {id: id});
+socket.emit('newUser', {
+  id: id
+});
 
 socket.on('gameFlow', function(data) {
   state = data.state;
   changeTitle(state);
+  changeTimer(data.time);
 });
 
 socket.on('draw', function(data) {
