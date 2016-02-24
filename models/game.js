@@ -9,7 +9,7 @@ var GameSchema = new Schema({
   player2: User.schema,
   player3: User.schema,
   open: { "type": Boolean, "default": true },
-  _draw: Draw.schema,
+  _draw: { type: Schema.Types.ObjectId, ref: 'Draw' },
 });
 
 var Game = mongoose.model('Game', GameSchema);
