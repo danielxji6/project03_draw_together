@@ -231,7 +231,13 @@ app.get('/api/games', function api_get_all_games(req, res) {
     });
 });
 
-app.get('/api/user/draws/save/:id', function api_save_user_draw(req, res) {
+app.get('/api/profile', function api_user_games(req, res) {
+  db.User.findById(req.user.id, function(err, user) {
+    res.json(user);
+  });
+});
+
+app.post('/api/user/draws/save/:id', function api_save_user_draw(req, res) {
   if(req.user) {
     db.User.findOne({_id: req.user._id}, function(err, user) {
       db.Game.findOne({_id: req.params.id}, function(err, game) {

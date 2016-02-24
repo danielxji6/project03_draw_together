@@ -20,8 +20,8 @@ function Play(user) {
   $('#canvasDiv').append(this.canvas);
   this.ctx = this.canvas.getContext("2d");
   this.ctx.fillStyle = "solid";
-  this.ctx.strokeStyle = "bule";
-  this.ctx.lineWidth = 2;
+  this.ctx.strokeStyle = "blue";
+  this.ctx.lineWidth = 4;
   this.ctx.lineCap = "round";
   this.paint = false;
 }
@@ -71,6 +71,13 @@ $('canvas').on('mousedown mousemove mouseup mouseout', function(event) {
   }
 });
 
+$('#save').click(function() {
+  $.post('/api/user/draws/save/'+id, function(response) {
+    console.log(response);
+    window.location = '/profile';
+  });
+});
+
 /***
 FUNCTION
 ***/
@@ -118,10 +125,9 @@ function finish_render() {
 
   $.post('/api/draws/save', data);
 
-  // render buttons
-  $('#finish-list').append('<a class="btn btn-default" href="/api/user/draws/save/'+ id +'">Save to profile</a>');
-  $('#finish-list').append('<a class="btn btn-default" href="/start">Play again!</a>');
-
+  // show buttons
+  $('#save').show();
+  $('#again').show();
 }
 
 /***
