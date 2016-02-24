@@ -5,9 +5,9 @@ var Draw = require("./draw");
 
 
 var GameSchema = new Schema({
-  player1: User.schema,
-  player2: User.schema,
-  player3: User.schema,
+  _player1: User.schema,
+  _player2: User.schema,
+  _player3: User.schema,
   open: { type: Boolean, default: true },
   _draw: { type: Schema.Types.ObjectId, ref: 'Draw' },
 });
