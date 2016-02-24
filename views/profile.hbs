@@ -1,22 +1,41 @@
 {{> header}}
 
-<div id="p_jum" class="jumbotron">
+  <!-- page content -->
   <div class="container">
-    <h1 id="greet">Profile - {{username}}</h1>
+    <div class="row">
+      <div class="col-md-12">
+        <a href="/start" class="btn btn-default">New Game</a>
+      </div>
+    </div>
   </div>
-</div>
-<br>
 
-<div class="container">
-  <div class="row">
-    <a class="btn btn-default" href="/logout">Log Out</a>
-    <a class="btn btn-default" href="/start">New Game</a>
-
+  <div class="container">
+    <div class="row">
+      <div id="game-list" class="col-md-12">
+        {{#if user.games.length}}
+        {{#each user.games}}
+        <!-- {{#ifDraw _draw.pngD_1 _draw.pngD_2 _draw.pngD_3}} -->
+        <div class="col-md-6 col-md-offset-3">
+          <div class="panel panel-default">
+            <!-- panel body -->
+            <div class="col-md-10 row">
+              <div class="container-fluid">
+                <!-- <p>Draws!!</p> -->
+                <img height="100" width="150" src="{{_draw.pngD_1}}">
+                <img height="100" width="150" src="{{_draw.pngD_2}}">
+                <img height="100" width="150" src="{{_draw.pngD_3}}">
+              </div>
+            </div>
+          </div>
+        </div><br>
+        <!-- {{/ifDraw}} -->
+        {{/each}}
+        {{/if}}
+      </div>
+    </div>
   </div>
-</div>
 
-<!-- custom script -->
-<script type="text/javascript" src="scripts/signup.js"></script>
+  <!-- custom script -->
+  <script type="text/javascript" src="scripts/profile.js"></script>
 </body>
-
 </html>
