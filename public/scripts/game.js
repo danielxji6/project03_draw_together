@@ -13,8 +13,8 @@ var count = 60;
 function Play(user) {
   this.user = user;
   this.canvas = document.createElement('canvas');
-  this.canvas.height = 200;
-  this.canvas.width = 300;
+  this.canvas.height = 300;
+  this.canvas.width = 450;
   this.canvas.id = this.user;
   // this.canvas.attr('data-user', this.user);
   $('#canvasDiv').append(this.canvas);
@@ -103,16 +103,16 @@ function changeTitle(state, count) {
 
 function finish_render() {
   // save png data
-  var pndD_1 = Players[0].canvas.toDataURL();
-  var pndD_2 = Players[1].canvas.toDataURL();
-  var pndD_3 = Players[2].canvas.toDataURL();
+  var pngD_1 = Players[0].canvas.toDataURL();
+  var pngD_2 = Players[1].canvas.toDataURL();
+  var pngD_3 = Players[2].canvas.toDataURL();
 
   var data = {
     game_id: id,
     pngData: {
-      pndD_1: pndD_1,
-      pndD_2: pndD_2,
-      pndD_3: pndD_3,
+      pngD_1: pngD_1,
+      pngD_2: pngD_2,
+      pngD_3: pngD_3,
     },
   };
 
