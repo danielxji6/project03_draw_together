@@ -90,7 +90,7 @@ app.get('/start', function start_a_game(req, res) {
 
 app.get('/games/:id', function game_page(req, res) {
   var id = req.params.id;
-  var userID = req.user ? req.user.id : 'not-login';
+  var userID = req.user ? req.user.id : null;
   var room;
   var spot;
   db.Game.findOne({_id: id}, function(err, game) {
