@@ -1,4 +1,4 @@
-/***
+/*********
 SERVER
 ***/
 
@@ -8,11 +8,11 @@ var express = require('express'),
     io = require('socket.io')(http),
     bodyParser = require('body-parser'),
     hbs = require('hbs'),
-    mongoose = require('mongoose'),
     cookieParser = require('cookie-parser'),
     session = require('express-session'),
     passport = require('passport'),
-    LocalStrategy = require('passport-local').Strategy;
+    LocalStrategy = require('passport-local').Strategy,
+    db = require('./models');
 
 // configure bodyParser (for receiving form data)
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -24,14 +24,6 @@ app.use(express.static(__dirname + '/bower_components'));
 // set view engine to hbs (handlebars)
 app.set('view engine', 'hbs');
 hbs.registerPartials(__dirname + '/views/partials');
-
-// connect to mongodb
-mongoose.connect('mongodb://localhost/draw_together');
-
-// require models
-var db = require('./models');
-// var Game = require('./models/game');
-// var Draw = require('./models/draw');
 
 // middleware for auth
 app.use(cookieParser());
@@ -49,7 +41,7 @@ passport.serializeUser(db.User.serializeUser());
 passport.deserializeUser(db.User.deserializeUser());
 
 
-/***
+/*********
 ROUTES
 ***/
 
@@ -82,15 +74,18 @@ app.get('/start', function start_a_game(req, res) {
       db.Game.create({}, function(err, newGame) {
         if(err) { return console.log('ERROR:', err);}
         id = newGame.id;
+        // go to the game play by id
+        res.redirect('/games/' + id);
       });
       return console.log('new game on');
     } else {
       id = game.id;
+      // go to the game play by id
+      res.redirect('/games/' + id);
     }
-
-    // go to the game play by id
-    res.redirect('/games/' + id);
   });
+  console.log('redirect should work bitch');
+  console.log(id);
 });
 
 app.get('/games/:id', function game_page(req, res) {
@@ -147,12 +142,17 @@ app.get('/games/:id', function game_page(req, res) {
 app.get('/profile', function profile_page(req, res) {
   if (req.user) {
     res.render('profile', req.user);
+    console.log(req.user);
   } else {
     res.redirect('/');
   }
 });
 
-/***
+app.get('/gallery', function gallery_page(req, res) {
+  res.render('gallery');
+});
+
+/*********
 AUTH
 ***/
 
@@ -217,9 +217,19 @@ app.get('/logout', function (req, res) {
 //   });
 // });
 
-/***
+/*********
 API
 ***/
+
+app.get('/api/games', function api_get_all_games(req, res) {
+  db.Game
+    .find({})
+    .populate('_draw')
+    .exec(function(err, games) {
+      if(err) {return console.log("ERROR:", err);}
+      res.json({games: games});
+    });
+});
 
 app.get('/api/user/draws/save/:id', function api_save_user_draw(req, res) {
   if(req.user) {
@@ -232,7 +242,7 @@ app.get('/api/user/draws/save/:id', function api_save_user_draw(req, res) {
       });
     });
   } else {
-    res.redirect('/signup');
+    res.redirect('/login');
   }
 });
 
@@ -251,7 +261,7 @@ app.post('/api/draws/save', function api_save_draw(req, res) {
   });
 });
 
-/***
+/*********
 ROOMS
 ***/
 
@@ -262,8 +272,8 @@ var rooms = [];
 function Room(id) {
   this.id = id;
   this.startTime = Date.now();
-  this.countTime = 60;
-  this.waitTime = 11;
+  this.countTime = 15;
+  this.waitTime = 2;
   this.state = 'wait';
 }
 
@@ -302,7 +312,7 @@ Room.prototype.count = function() {
   }, 1000);
 };
 
-/***
+/*********
 SOCKET.IO
 ***/
 
