@@ -9,15 +9,23 @@ var db = require('./models');
 //   console.log("All user: \n", users);
 // });
 
-
 db.User
-.find({})
-// .populate('_draw')
-.exec(function(err, games) {
-  console.log(games);
-  process.exit();
-});
+  .findOne({username: 'daniel'})
+  .populate('games')
+  .deepPopulate('games._draw')
+  .exec(function(err, user) {
+    // res.json(user);
+    console.log(user);
+    process.exit();
+  });
 
+
+  // Post.deepPopulate(posts, 'comments.user', function (err, _posts) {
+  //   // _posts is the same instance as posts and provided for convenience
+  //   posts.forEach(function (post) {
+  //     // post.comments and post.comments.user are fully populated
+  //   });
+  // });
 
 
 console.log("loded");

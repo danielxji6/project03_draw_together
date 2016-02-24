@@ -90,7 +90,7 @@ app.get('/start', function start_a_game(req, res) {
 
 app.get('/games/:id', function game_page(req, res) {
   var id = req.params.id;
-  var userID = req.user || 'guest'; //TODO: find username req.user.id
+  var userID = req.user ? req.user.id : 'not-login';
   var room;
   var spot;
   db.Game.findOne({_id: id}, function(err, game) {
@@ -115,16 +115,16 @@ app.get('/games/:id', function game_page(req, res) {
     }
 
     // assign player to empty spot
-    if(!game.player1) {
+    if(!game._player1) {
       spot = 1;
-      game.player1 = userID || 'guest_1';
+      game._player1 = userID || 'guest_1';
       room.wait();
-    } else if(!game.player2) {
+    } else if(!game._player2) {
       spot = 2;
-      game.player2 = userID || 'guest_2';
+      game._player2 = userID || 'guest_2';
     } else {
       spot = 3;
-      game.player3 = userID || 'guest_3';
+      game._player3 = userID || 'guest_3';
       game.open = false;
       room.state = 'start';
       room.count();
@@ -191,31 +191,6 @@ app.get('/logout', function (req, res) {
   res.redirect('/');
 });
 
-// // Update user profile
-// app.put('/api/user', function api_delete_user (req, res) {
-//   var userId = req.user._id;
-//   var data = req.body;
-//   console.log(req.user);
-//   console.log(data);
-//   db.User.findOne({_id: userId}, function (err, user) {
-//     if(err) { return console.log("ERROR: ", err);}
-//     user.phoneNum = data.phoneNum;
-//     user.location = data.location;
-//     user.remindText = (data.remindText === 'on' ? true : false);
-//     user.save(function (err, savedUser) {
-//       res.send('User saved!');
-//     });
-//   });
-// });
-//
-// // Delete user
-// app.delete('/api/user', function api_delete_user (req, res) {
-//   var userId = req.user._id;
-//   db.User.remove({_id: userId}, function (err, user) {
-//     if(err) { return console.log("ERROR: ", err);}
-//     res.json(user);
-//   });
-// });
 
 /*********
 API
@@ -232,9 +207,13 @@ app.get('/api/games', function api_get_all_games(req, res) {
 });
 
 app.get('/api/profile', function api_user_games(req, res) {
-  db.User.findById(req.user.id, function(err, user) {
-    res.json(user);
-  });
+  db.User
+    .findById(req.user.id)
+    .populate('games')
+    .deepPopulate('games._draw')
+    .exec(function(err, user) {
+      res.json(user);
+    });
 });
 
 app.post('/api/user/draws/save/:id', function api_save_user_draw(req, res) {
