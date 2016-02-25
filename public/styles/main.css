@@ -85,6 +85,7 @@ input:focus {
   font-size: 18pt;
   color: black;
   background: none;
+  text-decoration: none;
   padding: 20px;
   border-radius: 40px;
   background-color: rgb(255, 255, 255);

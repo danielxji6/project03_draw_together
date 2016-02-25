@@ -19,6 +19,7 @@
   "homepage": "https://github.com/danielxji6/project03_draw_together#readme",
   "dependencies": {
     "body-parser": "^1.15.0",
+    "bower": "^1.7.7",
     "cookie-parser": "^1.4.1",
     "express": "^4.13.4",
     "express-session": "^1.13.0",
