@@ -15,12 +15,13 @@ h1 {
   margin: 0;
 }
 span {
+  font-size: 20pt;
   margin: 0;
   color: #bbbbbb;
 }
 a {
   color: inherit;
-  margin: 0;
+  margin: 2px;
 }
 a:hover {
   color: black;
@@ -33,22 +34,21 @@ a:hover {
   background: none;
   padding: 20px;
   border: 0;
-  border-radius: 40px;
-  background-color: rgb(255, 255, 255);
+  border-radius: 20px;
+  background-color: white;
   box-shadow: 5px 7px 0px #000;
 }
 .bigbutton:hover {
   color: #000;
   text-decoration: none;
   text-decoration: none;
-  border: 2px solid rgb(255, 255, 255);
+  border: 2px solid white;
 }
 input {
   font-size: 18px;
   background-color: transparent;
   border-style: solid;
   border-width: 0px 0px 1px 0px;
-  border-color: darkred;
 }
 input::-moz-placeholder {
   color: rgba(255, 255, 255, .8);
@@ -60,25 +60,38 @@ input:focus {
   background-color: transparent;
   border-style: solid;
   border-width: 0px 0px 1px 0px;
-  border-color: darkred;
+  border-color: black;
+}
+.draw-container {
+  display: inline-block;
+  margin: 10px;
+  border: 1px solid black;
+  border-radius: 5px;
+  background-color: #fff7de;
+  width: 150px;
+  box-shadow: 3px 3px 0.5px #000;
+}
+.right-navbar {
+  text-align: right;
+  margin-top: 25px;
+  margin-right: 20px;
 }
 #header {
   position: relative;
   background: #b30000;
   background-size: cover;
   text-align: center;
-  padding-bottom: 100px;
-  padding-top: 100px;
+  padding-bottom: 80px;
+  padding-top: 80px;
 }
 #contain {
   /*position: relative;*/
   /*background: #b30000;*/
   background-size: cover;
   text-align: center;
-  padding-top: 80px;
+  padding-top: 40px;
 }
 #contain a {
-  margin: 50px;
   top: 50px;
 }
 #start {
@@ -88,17 +101,20 @@ input:focus {
   text-decoration: none;
   padding: 20px;
   border-radius: 40px;
-  background-color: rgb(255, 255, 255);
+  background-color: white;
   box-shadow: 5px 7px 0px #000;
 }
 #start:hover {
   text-decoration: none;
-  border: 2px solid rgb(255, 255, 255);
+  border: 2px solid white;
+}
+#finish-list {
+  /*margin: 70% auto;*/
 }
 canvas {
-  margin-right: auto;
-  margin-left: auto;
-  border: 2px solid black;
+  border: 2px solid white;
+  border-radius: 10px;
+  background-color: #fff7de;
 }
 #canvasDiv {
   width: 400px;
