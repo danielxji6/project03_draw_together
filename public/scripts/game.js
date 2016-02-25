@@ -20,7 +20,7 @@ function Play(user) {
   $('#canvasDiv').append(this.canvas);
   this.ctx = this.canvas.getContext("2d");
   this.ctx.fillStyle = "solid";
-  this.ctx.strokeStyle = "blue";
+  this.ctx.strokeStyle = "black";
   this.ctx.lineWidth = 4;
   this.ctx.lineCap = "round";
   this.paint = false;

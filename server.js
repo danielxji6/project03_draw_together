@@ -257,8 +257,8 @@ var rooms = [];
 function Room(id) {
   this.id = id;
   this.startTime = Date.now();
-  this.countTime = 15;
-  this.waitTime = 2;
+  this.countTime = 61;
+  this.waitTime = 11;
   this.state = 'wait';
 }
 
