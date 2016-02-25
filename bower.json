@@ -1,0 +1,23 @@
+{
+  "name": "project03_draw_together",
+  "description": "",
+  "main": "server.js",
+  "authors": [
+    "Daniel Lwo"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/danielxji6/project03_draw_together",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "handlebars": "^4.0.5",
+    "bootstrap": "^3.3.6",
+    "jquery": "^2.2.1"
+  }
+}
