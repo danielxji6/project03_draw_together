@@ -1,24 +1,33 @@
 {{> header}}
 
 <!-- page content -->
-<div class="container">
-  <div class="row col-md-2">
-    <h1 id="gameTitle">Waiting...</h1>
+<div class="container text-center col-md-3 col-md-offset-1">
+  <div class="row">
+    <h2 id="gameTitle">Waiting...</h2>
   </div>
-  <div class="row col-md-3">
-    <div class="">
-      <div id="canvasDiv" class="col-md-6 col-md-3" data-socket-id="{{socket_id}}" data-spot="{{spot}}">
-        <!-- canvas -->
-      </div>
+  <div class="row">
+    <!-- TODO: your part -->
+  </div>
+</div>
+<div class="container col-md-3">
+  <div class="">
+    <div id="canvasDiv" data-socket-id="{{socket_id}}" data-spot="{{spot}}">
+      <!-- canvas -->
     </div>
   </div>
 </div>
 
-<div class="container">
-  <div class="row col-md-3">
-    <div id="finish-list">
-      <a hidden id="save" class="btn btn-default" href="#save">Save to profile</a>
-      <a hidden id="again" class="btn btn-default" href="/start">Play again!</a>
+<div class="container col-md-2 col-md-offset-2">
+  <div class="row text-center">
+    <div hidden id="finish-list">
+      <br><br>
+      <div>
+        <a id="save" class="bigbutton" href="#save">Save to profile</a>
+      </div>
+      <br><br><br><br>
+      <div>
+        <a id="again" class="bigbutton" href="/start">Play again!</a>
+      </div>
     </div>
   </div>
 </div>
