@@ -1,37 +1,28 @@
 {{> header}}
 
 <div class="container">
-  <div class="row">
+  <div id="contain" class="row">
     <!-- Sign up form -->
     <div class="col-md-10 col-md-offset-1">
       <form class="form-horizontal" id='login-form'>
         <fieldset>
-          <h2>Log In</h2>
-          <hr>
+          <h2>Log In</h2><br>
           <!-- Username input-->
-          <div class="form-group">
-            <div class="col-md-8">
-              <input type="text" name="username" class="form-control input-md" placeholder="Username" autocomplete="off" required="" autofocus>
-            </div>
-          </div>
+          <input type="text" name="username" class="" placeholder="Username" autocomplete="off" required="" autofocus>
+          <br><br>
           <!-- Password input -->
+          <input type="password" name="password" class="" placeholder="Password" autocomplete="off" required="">
+          <p hidden id="wrongLogin" style="color: red">* wrong username or password</p>
+          <br><br>
+          <!-- Login Button -->
           <div class="form-group">
             <div class="col-md-8">
-              <input type="password" name="password" class="form-control input-md" placeholder="Password" autocomplete="off" required="">
-              <p hidden id="wrongLogin" style="color: red">* wrong username or password</p>
-            </div>
-          </div>
-          <!-- Button -->
-          <div class="form-group">
-            <div class="col-md-8">
-              <button id="login" name="singlebutton" class="btn btn-default">Log In</button>
+              <button id="login" name="singlebutton" class="bigbutton">Log In</button>
             </div>
           </div>
         </fieldset>
       </form>
-      <p>
-        New here? <a href="/signup">Sign Up</a>
-      </p>
+      <p style="text-align: left">New here? <a id="newHere" href="/signup">Sign Up</a></p>
     </div>
   </div>
 </div>
@@ -39,4 +30,5 @@
 <!-- custom script -->
 <script type="text/javascript" src="scripts/login.js"></script>
 </body>
+
 </html>
