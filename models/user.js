@@ -6,7 +6,8 @@ var deepPopulate = require('mongoose-deep-populate')(mongoose);
 var UserSchema = new Schema({
   username: String,
   password: String,
-  games: [{ type: Schema.Types.ObjectId, ref: 'Game' }]
+  games: [{ type: Schema.Types.ObjectId, ref: 'Game' }],
+  _profile: { type: Schema.Types.ObjectId, ref: 'Game' }
 });
 
 UserSchema.plugin(passportLocalMongoose, {
