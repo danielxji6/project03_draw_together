@@ -13,7 +13,6 @@ db.Draw.find({}, function(err, draws) {
   db.Draw.remove({}, function (err, draws) {
     if(err) { return console.log("ERROR: ", err);}
     console.log("Delete all draws!!");
+    process.exit();
   });
 });
-
-process.exit();
