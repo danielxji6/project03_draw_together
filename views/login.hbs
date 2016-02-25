@@ -2,27 +2,24 @@
 
 <div class="container">
   <div id="contain" class="row">
-    <!-- Sign up form -->
+    <!-- Log in form -->
     <div class="col-md-10 col-md-offset-1">
       <form class="form-horizontal" id='login-form'>
         <fieldset>
-          <h2>Log In</h2><br>
+          <h1>Log In</h1><br>
           <!-- Username input-->
-          <input type="text" name="username" class="" placeholder="Username" autocomplete="off" required="" autofocus>
+          <input type="text" name="username" placeholder="Username" autocomplete="off" required="" autofocus>
           <br><br>
           <!-- Password input -->
-          <input type="password" name="password" class="" placeholder="Password" autocomplete="off" required="">
-          <p hidden id="wrongLogin" style="color: red">* wrong username or password</p>
+          <input type="password" name="password" placeholder="Password" autocomplete="off" required="">
           <br><br>
           <!-- Login Button -->
-          <div class="form-group">
-            <div class="col-md-8">
-              <button id="login" name="singlebutton" class="bigbutton">Log In</button>
-            </div>
-          </div>
+          <button id="login" name="singlebutton" class="bigbutton">Log In</button>
+          <br><br>
+          <p hidden id="wrongLogin">* wrong username or password</p>
         </fieldset>
       </form>
-      <p style="text-align: left">New here? <a id="newHere" href="/signup">Sign Up</a></p>
+      <p>New here? <a href="/signup">Sign Up</a></p>
     </div>
   </div>
 </div>
