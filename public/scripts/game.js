@@ -126,8 +126,7 @@ function finish_render() {
   $.post('/api/draws/save', data);
 
   // show buttons
-  $('#save').show();
-  $('#again').show();
+  $('#finish-list').show();
 }
 
 /***

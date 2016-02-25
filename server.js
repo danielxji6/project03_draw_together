@@ -90,7 +90,7 @@ app.get('/start', function start_a_game(req, res) {
 
 app.get('/games/:id', function game_page(req, res) {
   var id = req.params.id;
-  var userID = req.user ? req.user.id : null;
+  var userName = req.user ? req.user.username : null;
   var room;
   var spot;
   db.Game.findOne({_id: id}, function(err, game) {
@@ -117,14 +117,14 @@ app.get('/games/:id', function game_page(req, res) {
     // assign player to empty spot
     if(!game._player1) {
       spot = 1;
-      game._player1 = userID || 'guest_1';
+      game._player1 = userName || 'guest_1';
       room.wait();
     } else if(!game._player2) {
       spot = 2;
-      game._player2 = userID || 'guest_2';
+      game._player2 = userName || 'guest_2';
     } else {
       spot = 3;
-      game._player3 = userID || 'guest_3';
+      game._player3 = userName || 'guest_3';
       game.open = false;
       room.state = 'start';
       room.count();
@@ -144,7 +144,7 @@ app.get('/profile', function profile_page(req, res) {
     res.render('profile', req.user);
     console.log(req.user);
   } else {
-    res.redirect('/');
+    res.redirect('/login');
   }
 });
 
