@@ -84,8 +84,6 @@ app.get('/start', function start_a_game(req, res) {
       res.redirect('/games/' + id);
     }
   });
-  console.log('redirect should work bitch');
-  console.log(id);
 });
 
 app.get('/games/:id', function game_page(req, res) {
@@ -102,8 +100,6 @@ app.get('/games/:id', function game_page(req, res) {
     // find the room and in the rooms list and check if it's still waiting
     rooms.forEach(function(ele, index) {
       if(ele.id === id) {
-        // redirect player if the game is already start
-        if(ele.state !== 'wait') res.redirect('/start');
         room = ele;
       }
     });
@@ -133,9 +129,13 @@ app.get('/games/:id', function game_page(req, res) {
     // save the player id and condition
     game.save();
 
-    // send the room id (aka socket id) and which spot to user
-    console.log("receive", spot);
-    res.render('game', {socket_id: id, spot: spot});
+    // redirect player if the game is already start
+    if(room.state !== 'wait') {
+      res.redirect('/start');
+    } else {
+      // send the room id (aka socket id) and which spot to user
+      res.render('game', {socket_id: id, spot: spot});
+    }
   });
 });
 
