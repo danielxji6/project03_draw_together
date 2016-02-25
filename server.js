@@ -110,6 +110,14 @@ app.get('/games/:id', function game_page(req, res) {
       rooms.push(room);
     }
 
+    // redirect player if the game is already start
+    if(room.state !== 'wait') {
+      res.redirect('/start');
+    } else {
+      // send the room id (aka socket id) and which spot to user
+      res.render('game', {socket_id: id, spot: spot});
+    }
+    
     // assign player to empty spot
     if(!game._player1) {
       spot = 1;
@@ -129,13 +137,6 @@ app.get('/games/:id', function game_page(req, res) {
     // save the player id and condition
     game.save();
 
-    // redirect player if the game is already start
-    if(room.state !== 'wait') {
-      res.redirect('/start');
-    } else {
-      // send the room id (aka socket id) and which spot to user
-      res.render('game', {socket_id: id, spot: spot});
-    }
   });
 });
 
