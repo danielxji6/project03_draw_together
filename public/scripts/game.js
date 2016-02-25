@@ -8,7 +8,6 @@ var socket = io();
 var state = '';
 var count = 60;
 
-
 // canvas setup
 function Play(user) {
   this.user = user;
@@ -44,6 +43,8 @@ var Players = [];
 Players.push(new Play('guest_1'));
 Players.push(new Play('guest_2'));
 Players.push(new Play('guest_3'));
+
+$('#curly'+spot).attr('width', 70);
 
 /***
 EVENTS
