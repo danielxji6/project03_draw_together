@@ -1,6 +1,6 @@
 # DOODLE 25
 ## a live drawing game
-Doodle 25 is a web game application. Drawing on the page and all players can see your move real-time. All the art works will be save to database. It's easy to play and have fun with friends!
+Doodle 25 is a web game application. Drawing anything you like (or unicorn) and all players can see your move in real-time. All the art works will be save to database so you can share it. Have fun with friends! (Click on start or share url to play)
 
 ## Screenshot
 ![](readme/sc_01.png)
@@ -41,4 +41,4 @@ Doodle 25 is a web game application. Drawing on the page and all players can see
 <a href="https://doodle25.herokuapp.com/" target="_blank">DOODLE 25</a>
 
 ## LinkedIn
- <a href="https://www.linkedin.com/in/danielxji6" target="_blank">Daniel Lwo</a>
+ <a href="https://www.linkedin.com/in/daniellwo" target="_blank">Daniel Lwo</a>
