@@ -27,11 +27,11 @@ function Play(user) {
 }
 // draw on canvas
 Play.prototype.draw = function(x, y, type) {
-  if (type === 'mousedown' || type === 'touchstart') {
+  if (type === 'mousedown') {
     this.paint = true;
     this.ctx.moveTo(x, y);
     this.ctx.beginPath();
-  } else if (type === 'mousemove' || type === 'touchmove' && this.paint) {
+  } else if (type === 'mousemove' && this.paint) {
     this.ctx.lineTo(x, y);
     this.ctx.stroke();
   } else {
@@ -49,7 +49,7 @@ Players.push(new Play('guest_3'));
 EVENTS
 ***/
 
-$('canvas').on('mousedown mousemove mouseup mouseout touchstart touchend touchmove', function(event) {
+$('canvas').on('mousedown mousemove mouseup mouseout', function(event) {
   if (state == 'start') {
     if (this.id == ('guest_' + spot)) {
       var type = event.handleObj.type;
