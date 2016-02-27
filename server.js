@@ -46,49 +46,15 @@ ROUTES
 ***/
 
 
-var routes = require('./routes/index');
+var routes = require('./routes/index_controller'),
+    start = require('./routes/index_controller'),
+    user = require('./routes/user_controller'),
+    api = require('./routes/api_controller');
 
 routes(app);
-// app.get('/', function home_page(req, res) {
-//   // console.log(req.user);
-//   res.render('index');
-// });
-//
-// app.get('/signup', function signup_page(req, res) {
-//   if(req.user) {
-//     res.redirect('/profile');
-//   }
-//   res.render('signup');
-// });
-//
-// app.get('/login', function login_page(req, res) {
-//   if(req.user) {
-//     res.redirect('/profile');
-//   }
-//   res.render('login');
-// });
-
-app.get('/start', function start_a_game(req, res) {
-  var id;
-  db.Game.findOne({open: true}, function(err, game) {
-    if(err) { return console.log('ERROR:', err);}
-
-    // if there's no open game then create one
-    if(!game) {
-      db.Game.create({}, function(err, newGame) {
-        if(err) { return console.log('ERROR:', err);}
-        id = newGame.id;
-        // go to the game play by id
-        res.redirect('/games/' + id);
-      });
-      return console.log('new game on');
-    } else {
-      id = game.id;
-      // go to the game play by id
-      res.redirect('/games/' + id);
-    }
-  });
-});
+start(app);
+user(app, passport);
+api(app);
 
 app.get('/games/:id', function game_page(req, res) {
   var id = req.params.id;
@@ -98,9 +64,14 @@ app.get('/games/:id', function game_page(req, res) {
   db.Game.findOne({_id: id}, function(err, game) {
     if(err) { return console.log('ERROR:', err);}
 
+    // if the game is not open, redirect player to a new game
+    if(!game.open) res.redirect('/start');
+
     // find the room and in the rooms list and check if it's still waiting
     rooms.forEach(function(ele, index) {
       if(ele.id === id) {
+        // redirect player if the game is already start
+        if(ele.state !== 'wait') res.redirect('/start');
         room = ele;
       }
     });
@@ -109,13 +80,6 @@ app.get('/games/:id', function game_page(req, res) {
     if(!room) {
       room = new Room(id);
       rooms.push(room);
-    }
-
-    // if the game is not open, redirect player to a new game
-    // redirect player if the game is already start
-    if(!game.open || room.state !== 'wait') {
-      res.redirect('/start');
-      return true;
     }
 
     // assign player to empty spot
@@ -133,118 +97,13 @@ app.get('/games/:id', function game_page(req, res) {
       room.state = 'start';
       room.count();
     }
+
     // save the player id and condition
     game.save();
 
-    // render the game page plus the spot
+    // send the room id (aka socket id) and which spot to user
+    console.log("receive", spot);
     res.render('game', {socket_id: id, spot: spot});
-  });
-});
-
-// app.get('/profile', function profile_page(req, res) {
-//   if (req.user) {
-//     res.render('profile', req.user);
-//     console.log(req.user);
-//   } else {
-//     res.redirect('/login');
-//   }
-// });
-//
-// app.get('/gallery', function gallery_page(req, res) {
-//   res.render('gallery');
-// });
-
-/*********
-AUTH
-***/
-
-// Sign up new user, then log them in
-app.post('/signup', function(req, res) {
-  // if user is logged in, don't let them sign up again
-  if (req.user) {
-    res.redirect('/profile');
-  } else {
-    // Check if the username has used before
-    db.User.findOne({username: req.body.username}, function(err, user) {
-      if(user) {
-        res.send("duplicate");
-      } else {
-        // Create user
-        db.User.register(new db.User({ username: req.body.username}), req.body.password,
-          function (err, newUser) {
-            passport.authenticate('local')(req, res, function () {
-              res.send("User created");
-            });
-          }
-        );
-      }
-    });
-  }
-});
-
-// log in user
-app.post('/login', passport.authenticate('local'), function (req, res) {
-  res.send('Logged in');
-});
-
-// log out user
-app.get('/logout', function (req, res) {
-  req.logout();
-  res.redirect('/');
-});
-
-
-/*********
-API
-***/
-
-app.get('/api/games', function api_get_all_games(req, res) {
-  db.Game
-    .find({})
-    .populate('_draw')
-    .exec(function(err, games) {
-      if(err) {return console.log("ERROR:", err);}
-      res.json({games: games});
-    });
-});
-
-app.get('/api/profile', function api_user_games(req, res) {
-  db.User
-    .findById(req.user.id)
-    .populate('games')
-    .deepPopulate('games._draw')
-    .exec(function(err, user) {
-      res.json(user);
-    });
-});
-
-app.post('/api/user/draws/save/:id', function api_save_user_draw(req, res) {
-  if(req.user) {
-    db.User.findOne({_id: req.user._id}, function(err, user) {
-      db.Game.findOne({_id: req.params.id}, function(err, game) {
-        user.games.push(game);
-        user.save(function(err, user) {
-          res.send("save draw to user");
-        });
-      });
-    });
-  } else {
-    res.redirect('/login');
-  }
-});
-
-app.post('/api/draws/save', function api_save_draw(req, res) {
-  var pngData = req.body.pngData;
-  var gameID = req.body.game_id;
-  db.Game.findOne({_id: gameID}, function(err, game) {
-    if(!game._draw) {
-      db.Draw.create(pngData, function(err, draw) {
-        game._draw = draw._id;
-        game.save(function(err, game) {
-          res.send("save draw");
-        });
-      });
-    }
   });
 });
 
