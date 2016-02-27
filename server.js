@@ -88,8 +88,6 @@ app.get('/start', function start_a_game(req, res) {
       res.redirect('/games/' + id);
     }
   });
-  console.log('redirect should work bitch');
-  console.log(id);
 });
 
 app.get('/games/:id', function game_page(req, res) {
@@ -100,14 +98,9 @@ app.get('/games/:id', function game_page(req, res) {
   db.Game.findOne({_id: id}, function(err, game) {
     if(err) { return console.log('ERROR:', err);}
 
-    // if the game is not open, redirect player to a new game
-    if(!game.open) res.redirect('/start');
-
     // find the room and in the rooms list and check if it's still waiting
     rooms.forEach(function(ele, index) {
       if(ele.id === id) {
-        // redirect player if the game is already start
-        if(ele.state !== 'wait') res.redirect('/start');
         room = ele;
       }
     });
@@ -116,6 +109,13 @@ app.get('/games/:id', function game_page(req, res) {
     if(!room) {
       room = new Room(id);
       rooms.push(room);
+    }
+
+    // if the game is not open, redirect player to a new game
+    // redirect player if the game is already start
+    if(!game.open || room.state !== 'wait') {
+      res.redirect('/start');
+      return true;
     }
 
     // assign player to empty spot
@@ -133,12 +133,10 @@ app.get('/games/:id', function game_page(req, res) {
       room.state = 'start';
       room.count();
     }
-
     // save the player id and condition
     game.save();
 
-    // send the room id (aka socket id) and which spot to user
-    console.log("receive", spot);
+    // render the game page plus the spot
     res.render('game', {socket_id: id, spot: spot});
   });
 });
