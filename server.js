@@ -45,24 +45,28 @@ passport.deserializeUser(db.User.deserializeUser());
 ROUTES
 ***/
 
-app.get('/', function home_page(req, res) {
-  // console.log(req.user);
-  res.render('index');
-});
 
-app.get('/signup', function signup_page(req, res) {
-  if(req.user) {
-    res.redirect('/profile');
-  }
-  res.render('signup');
-});
+var routes = require('./routes/index');
 
-app.get('/login', function login_page(req, res) {
-  if(req.user) {
-    res.redirect('/profile');
-  }
-  res.render('login');
-});
+routes(app);
+// app.get('/', function home_page(req, res) {
+//   // console.log(req.user);
+//   res.render('index');
+// });
+//
+// app.get('/signup', function signup_page(req, res) {
+//   if(req.user) {
+//     res.redirect('/profile');
+//   }
+//   res.render('signup');
+// });
+//
+// app.get('/login', function login_page(req, res) {
+//   if(req.user) {
+//     res.redirect('/profile');
+//   }
+//   res.render('login');
+// });
 
 app.get('/start', function start_a_game(req, res) {
   var id;
@@ -139,18 +143,18 @@ app.get('/games/:id', function game_page(req, res) {
   });
 });
 
-app.get('/profile', function profile_page(req, res) {
-  if (req.user) {
-    res.render('profile', req.user);
-    console.log(req.user);
-  } else {
-    res.redirect('/login');
-  }
-});
-
-app.get('/gallery', function gallery_page(req, res) {
-  res.render('gallery');
-});
+// app.get('/profile', function profile_page(req, res) {
+//   if (req.user) {
+//     res.render('profile', req.user);
+//     console.log(req.user);
+//   } else {
+//     res.redirect('/login');
+//   }
+// });
+//
+// app.get('/gallery', function gallery_page(req, res) {
+//   res.render('gallery');
+// });
 
 /*********
 AUTH
