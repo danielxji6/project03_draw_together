@@ -1,6 +1,6 @@
 # DOODLE 25
 ## a live drawing game
-Doodle 25 is a web game application. Drawing anything you like (or unicorn) and all players can see your move in real-time. All the art works will be save to database so you can share it. Have fun with friends! (Click on start or share url to play)
+Doodle 25 is a playground for people can join with others and draw anything you like (or unicorn) at the same time to create an art work in 60 seconds. Player can go to Gallery to see others works or login to save draws. Have fun with friends! (Click on start or share url to play)
 
 ## Screenshot
 ![](readme/sc_01.png)
