@@ -1,7 +1,7 @@
 # DOODLE 25
 ## a live drawing game
 Doodle 25 is a playground where people can join with others and draw anything they like (like a unicorn!) in 60 seconds. Player can go to the Gallery to see others' works or login to save drawings.
-Server will generate a new room. Once the room has three players the game starts. Players can share the url to join the room before the game start.
+Server will generate a new room. Once the room has three players the game starts. Players can share the url to join the room before the game start.(If you just want to see the synchronize on your own, open more than one tab and click start in 10 seconds) 
 
 ## Screenshot
 ![](readme/sc_01.png)
