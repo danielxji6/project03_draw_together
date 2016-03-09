@@ -46,10 +46,10 @@ ROUTES
 ***/
 
 
-var routes = require('./routes/index_controller'),
-    start = require('./routes/index_controller'),
-    user = require('./routes/user_controller'),
-    api = require('./routes/api_controller');
+var routes = require('./controllers/index_controller'),
+    start = require('./controllers/start_controller'),
+    user = require('./controllers/user_controller'),
+    api = require('./controllers/api_controller');
 
 routes(app);
 start(app);
